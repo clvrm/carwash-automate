@@ -1,0 +1,16 @@
+<?php
+
+return [
+    // 'app.baseUrl' => 'http://localhost:8000',
+    // 'dadata' => [
+    //     'token' => '',
+    //     'secret' => '',
+    // ],
+    // 'firebase' => [
+    //     'credentials' => '@app/commons/notification/firebase/credentials.json',
+    // ],
+    // 'auth' => [
+    //     'driver' => 'remote',
+    //     'host' => 'http://auth-service:8001',
+    // ],
+];

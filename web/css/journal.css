@@ -1,0 +1,467 @@
+.table-wrapper {
+    position: relative;
+}
+
+.table-time-grid {
+    position: absolute;
+    top: 0;
+    background: white;
+    width: max-content;
+    padding-right: 20px;
+}
+
+.dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-state-active {
+    color: unset !important;
+    background: #f9f9f9 !important;
+}
+
+table.dx-scheduler-time-panel tr.dx-scheduler-time-panel-row:first-child span.jo-time-cell:first-child {
+    position: initial;
+}
+
+.timetable-axis {
+    float: left;
+    margin-top: 35px;
+    padding: 0 10px;
+}
+
+.table-time-grid .timetable-axis .axis-item {
+    height: 60px;
+}
+
+.timetable-columns-post {
+    position: relative;
+    top: 0;
+    float: left;
+    margin-left: 10px;
+}
+
+.react-resizable-handle.react-resizable-handle-se {
+    touch-action: manipulation;
+}
+
+.timetable-columns-post .timetable-column {
+    width: 251px;
+    text-align: center;
+    float: left;
+}
+
+.timetable-columns-post .timetable-column .timetable-column-header {
+    font-size: 15px;
+    padding: 10px 0;
+    height: 42px;
+    border-bottom: 1px solid #c5d1e1;
+}
+
+.timetable-columns-post .timetable-column .timetable-column-grid {
+    height: 100%;
+}
+
+.grid-item.first-column {
+    border-bottom: 1px solid #C5D1E1;
+    height: 60px;
+    border-right: 1px solid #C5D1E1;
+    /*border-left: 1px solid #C5D1E1;*/
+}
+
+.timetable-column.pred-column {
+    width: 10px;
+}
+
+.table-wrapper #tableJs {
+    padding-top: 0px;
+    margin-left: 0px;
+}
+
+div#contentWrapper {
+    padding: 0;
+    max-width: 100%;
+}
+
+div#kt_content {
+    padding: 10px 0;
+}
+
+.dx-scheduler-work-space {
+    padding-top: 0;
+    margin-top: 0;
+}
+
+a.jo-create-link-from-schedule i {
+    color: #afcaf0;
+}
+
+a.jo-create-link-from-schedule {
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f5f7fa;
+}
+
+.resize-fix {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+}
+
+
+.jo.jo-wrapper.jo-status-new-wash {
+    background: #E9F2FF;
+}
+
+.jo.jo-wrapper.jo-status-new-client {
+    background: #E2F3F0;
+}
+
+.jo.jo-wrapper.jo-status-work {
+    background: #f9edd9;
+}
+
+.jo.jo-wrapper.jo-status-archive {
+    background: #E0E0E0;
+}
+
+.jo.jo-wrapper.jo-status-block {
+    background: #e6dcdc;
+}
+
+.jo-tooltip-status.jo-status-new-wash,
+.jo.journal-order-short.jo-status-new-wash,
+.jo-status-prefix.jo-status-new-wash {
+    background: #1853A8;
+}
+
+
+.jo-tooltip-status.jo-status-new-client,
+.jo.journal-order-short.jo-status-new-client,
+.jo-status-prefix.jo-status-new-client {
+    background: #0AA385;
+}
+
+.jo-tooltip-status.jo-status-work,
+.jo.journal-order-short.jo-status-work,
+.jo-status-prefix.jo-status-work {
+    background: #FFA606;
+}
+
+.jo-tooltip-status.jo-status-archive,
+.jo.journal-order-short.jo-status-archive,
+.jo-status-prefix.jo-status-archive {
+    background: #797979;
+}
+
+.jo-tooltip-status.jo-status-block,
+.jo-status-prefix.jo-status-block,
+.jo.journal-order-short.jo-status-block {
+    background: #262626;
+}
+
+.jo.journal-order {
+    background: #FFFFFF;
+    border-radius: 5px;
+    overflow: hidden;
+    height: inherit;
+}
+
+.jo.journal-order-short {
+    background: orange;
+    border: 1px solid #5353532e;
+    border-radius: 5px;
+}
+
+.jo-main-info {
+    max-height: 60px;
+    height: 60px;
+    border-bottom: 1px solid #d6d6dd;
+    border-radius: 5px;
+}
+
+.jo-status-prefix {
+    height: auto;
+    background: #3699ff;
+    width: 10px;
+    border-radius: 5px 0 0 5px;
+}
+
+.jo-car-number {
+    margin-right: 5px;
+}
+
+.jo-car-region {
+    margin-left: 5px;
+}
+
+.car-info-divider {
+    height: 15px;
+    width: 1px;
+    background: grey;
+}
+
+.dx-scheduler-time-panel-cell.dx-scheduler-time-panel-current-time-cell::before {
+    background-color: #5694f0;
+}
+
+.dx-scheduler-date-time-indicator::before {
+    display: none;
+}
+
+.jo-calendar-block.d-flex {
+    padding: 5px 10px;
+    align-items: center;
+    background: #F5F7FA;
+    border-radius: 30px;
+}
+
+.jo-calendar-open {
+    background: #F5F7FA;
+    border-radius: 30px;
+    padding: 3px 10px 7px;
+}
+
+.jo-calendar-interval {
+    padding: 5px 10px 5px;
+}
+
+.jo-tooltip-additional-info ul {
+    list-style: none;
+    padding: 10px 15px 0;
+    text-align: left;
+}
+
+.jo-tooltip-title-car-number {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.dx-theme-generic-typography {
+    background-color: #EEF0F8;
+}
+
+.jo-page-header {
+    background-color: #ffffff;
+}
+
+#tableJs .dx-scheduler-header.dx-widget {
+    display: none;
+}
+
+.jo-page-header .dropdown-toggle::after {
+    display: none;
+}
+
+.dx-scheduler-work-space {
+    padding-top: 10px;
+}
+
+.dx-resizable-handle-top {
+    display: none;
+}
+
+.dx-scheduler-appointment.dx-state-hover.dx-resizable {
+    -webkit-box-shadow: inset 0 0px 0 0 rgb(0 0 0 / 30%), inset 0 -4px 0 0 rgb(0 0 0 / 30%);
+    box-shadow: inset 0 0px 0 0 rgb(0 0 0 / 30%), inset 0 -4px 0 0 rgb(0 0 0 / 30%);
+}
+
+.dx-scheduler-appointment.dx-state-hover {
+    -webkit-box-shadow: inset 0 0px 0 0 rgb(0 0 0 / 30%);
+    box-shadow: inset 0 -4px 0 0 rgb(0 0 0 / 30%);
+}
+
+.dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-state-hover {
+    background-color: unset;
+    color: initial;
+}
+
+.dx-scheduler-appointment {
+    -webkit-box-shadow: inset 0 -2px 0px 0 rgb(0 0 0 / 30%);
+    box-shadow: inset 0 -2px 0px 0 rgb(0 0 0 / 30%);
+    border: 1px solid #e9e9e9;
+    margin-left: 3px;
+    margin-right: 3px;
+    background-color: white;
+    color: #333333;
+    border-radius: 5px;
+}
+
+.dx-scheduler-appointment-content {
+    padding: 0px 0px;
+}
+
+.dx-scheduler-work-space.dx-scheduler-work-space-grouped:not(.dx-scheduler-agenda) .dx-scheduler-all-day-title {
+    display: none;
+}
+
+.dx-scheduler-date-table-cell, .dx-scheduler-time-panel-cell {
+    height: 60px;
+}
+
+td.dx-scheduler-date-table-cell {
+    width: 230px;
+}
+
+th.dx-scheduler-group-header {
+    min-width: 230px;
+    width: 230px;
+}
+
+span.jo-time-cell {
+    top: -10px;
+    position: absolute;
+    right: 20px;
+}
+
+.dx-scheduler-appointment.dx-state-focused {
+    color: inherit;
+}
+
+.dx-scheduler-appointment .dx-scheduler-appointment:not(.dx-scheduler-appointment-drag-source)::before, .dx-scheduler-appointment.dx-state-focused:not(.dx-scheduler-appointment-drag-source)::before {
+    background-color: unset;
+}
+
+input#joDatepickerInput {
+    position: absolute;
+    visibility: hidden;
+    width: 0px;
+    height: 0px;
+    margin-left: 100px;
+}
+
+.jo-interval-dropdown {
+    max-width: 130px;
+}
+
+.jo-reputation .fa-smile {
+    color: #4BB462;
+}
+
+.jo-reputation .fa-frown {
+    color: #F6522E;
+}
+
+.jo-tooltip-order-status .jo-tooltip-status {
+    width: auto;
+    height: 100%;
+    border-radius: 50px;
+}
+
+.jo-tooltip-order-status {
+    width: 20px;
+    height: 20px;
+    margin-right: 20px;
+}
+
+/* MEDIA */
+@media screen and (max-width: 992px) {
+    input#joDatepickerInput {
+        margin-left: 120px;
+    }
+
+    #kt_header_mobile {
+        background: #1853A8;
+        box-shadow: none;
+    }
+
+    .jo-page-header {
+        background: #1853A8;
+        background: linear-gradient(180deg, #1853A8, #1853A8 50%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 1) 100%);
+        z-index: 10;
+        position: fixed;
+        top: 50px;
+        width: 100%;
+    }
+
+    .create-new-order-journal-button {
+        border: 3px solid #FFFFFF;
+        border-radius: 6px;
+    }
+
+    .create-new-order-journal-button .btn {
+        background: unset !important;
+        border: unset;
+        font-size: 14px;
+    }
+
+    .journal-mobile-info-button {
+        background: white !important;
+        border: none;
+        align-items: center;
+        box-shadow: 0px 0px 10px 3px rgb(0 0 0 / 6%);
+    }
+
+    .journal-header-setting-block {
+        background: white;
+        border-radius: 35px;
+        padding: 5px 10px;
+        box-shadow: 0px 0px 10px 3px rgb(0 0 0 / 6%);
+    }
+
+    .journal-mobile-info-button i {
+        color: black !important;
+    }
+
+    .header-page-title {
+        color: white;
+        font-weight: 400;
+    }
+
+    .header-mobile .burger-icon span::before,
+    .header-mobile .burger-icon span::after,
+    .header-mobile .burger-icon span {
+        background-color: #ffffff;
+    }
+
+    .dx-scheduler-work-space {
+        padding-top: 0px;
+    }
+
+    #kt_content {
+        padding: 60px 0 0 !important;
+    }
+
+    th.dx-scheduler-group-header {
+        min-width: 150px;
+        width: 150px;
+    }
+
+    td.dx-scheduler-date-table-cell {
+        width: 150px;
+    }
+
+    /* Фикс для времени > 12 часов */
+    .dx-scheduler-small .dx-scheduler-time-panel {
+        width: 55px;
+    }
+
+    .dx-scheduler-small .dx-scheduler-work-space-grouped:not(.dx-scheduler-timeline):not(.dx-scheduler-agenda):not(.dx-scheduler-work-space-month):not(.dx-scheduler-work-space-all-day):not(.dx-scheduler-work-space-vertical-grouped) .dx-scheduler-header-scrollable {
+        margin-left: 55px;
+    }
+
+    /* end */
+    .jo-additional-info ul {
+        list-style: none;
+        padding-left: 5px;
+    }
+
+    .jo-reputation {
+        margin-right: 5px !important;
+    }
+
+    .d-flex.jo-order-work-info {
+        display: block !important;
+        padding-left: 5px !important;
+    }
+
+    .dx-resizable-handle-bottom {
+        left: 0;
+        width: 100%;
+        height: 10px;
+    }
+
+    .jo.journal-order {
+        border-bottom: 4px solid #aaaaaa30;
+    }
+}

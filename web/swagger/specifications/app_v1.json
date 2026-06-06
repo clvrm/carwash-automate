@@ -1,0 +1,1932 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Carwash API",
+    "contact": {
+      "email": "dev.siraix@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "localhost:8000",
+  "basePath": "/api/v1/",
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Авторизация",
+      "externalDocs": {
+        "description": "Развернуть",
+        "url": "http://localhost:8000"
+      }
+    },
+    {
+      "name": "common",
+      "description": "Базовая информация",
+      "externalDocs": {
+        "description": "Развернуть",
+        "url": "http://localhost:8000"
+      }
+    },
+    {
+      "name": "journal",
+      "description": "Работа с журналом",
+      "externalDocs": {
+        "description": "Развернуть",
+        "url": "http://localhost:8000"
+      }
+    },
+    {
+      "name": "orders",
+      "description": "Заказы",
+      "externalDocs": {
+        "description": "Развернуть",
+        "url": "http://localhost:8000"
+      }
+    },
+    {
+      "name": "personal",
+      "description": "Работа с сотрудниками автомойки",
+      "externalDocs": {
+        "description": "Развернуть",
+        "url": "http://localhost:8000"
+      }
+    },
+    {
+      "name": "services",
+      "description": "Услуги, комплексы",
+      "externalDocs": {
+        "description": "Развернуть",
+        "url": "http://localhost:8000"
+      }
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Авторизация пользователя",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "formData",
+            "type": "string",
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "type": "string",
+            "description": "Закодированный в MD5",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "В случае успеха"
+          },
+          "400": {
+            "description": "Неверные параметры | Пароль не совпал"
+          },
+          "403": {
+            "description": "Пароль неверный"
+          },
+          "404": {
+            "description": "Пользователь не найден"
+          },
+          "503": {
+            "description": "Ошибка внешнего сервера авторизации"
+          }
+        }
+      }
+    },
+    "/auth/check-token": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Проверка токена",
+        "description": "При каждом запуске приложения, требуется проверять валидность пользователя и его актуальные данные",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "formData",
+            "type": "string",
+            "description": "Получается после авторизации и хранится в приложении",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "formData",
+            "type": "string",
+            "description": "Сохраненный токен (нужен для большинства запросов)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно. Возвращает статус токена, и профиль (только в случае валидности)"
+          },
+          "404": {
+            "description": "Пользователь не найден"
+          },
+          "400": {
+            "description": "Неверные параметры"
+          }
+        }
+      }
+    },
+    "/common/get-about-info": {
+      "get": {
+        "tags": [
+          "common"
+        ],
+        "summary": "Информация о приложении",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          }
+        }
+      }
+    },
+    "/common/get-policy-info": {
+      "get": {
+        "tags": [
+          "common"
+        ],
+        "summary": "Политика конфиденциальности",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          }
+        }
+      }
+    },
+    "/common/free-time-intervals": {
+      "post": {
+        "tags": [
+          "common"
+        ],
+        "summary": "Получить доступные промежутки времени для записи. Используется на экране записи, исключительно для визуала",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "Номер автомойки, также получаемый при первичной авторизации",
+            "required": true
+          },
+          {
+            "name": "post",
+            "in": "formData",
+            "type": "integer",
+            "description": "Номер поста",
+            "required": true
+          },
+          {
+            "name": "currentOrderId",
+            "in": "formData",
+            "type": "string",
+            "description": "ID выбранного заказа, если он существует",
+            "required": false
+          },
+          {
+            "name": "date",
+            "in": "formData",
+            "type": "string",
+            "description": "Дата записи. Формат: 2021-12-30",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "404": {
+            "description": "Не найдены автомойка / настройки автомойки"
+          }
+        }
+      }
+    },
+    "/common/free-time-intervals-all-posts": {
+      "post": {
+        "tags": [
+          "common"
+        ],
+        "summary": "Получить доступные промежутки времени для записи по всем постам с разделением по часам и минутам.",
+        "description": "Формат времени: ['00' => ['00','05',...],...]",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "Номер автомойки, также получаемый при первичной авторизации",
+            "required": true
+          },
+          {
+            "name": "currentOrderId",
+            "in": "formData",
+            "type": "string",
+            "description": "ID выбранного заказа, если он существует",
+            "required": false
+          },
+          {
+            "name": "date",
+            "in": "formData",
+            "type": "string",
+            "description": "Дата записи. Формат: 2021-12-30",
+            "required": true
+          },
+          {
+            "name": "workTimeMin",
+            "in": "formData",
+            "type": "integer",
+            "description": "Количество минут работы в заказе",
+            "required": true
+          },
+          {
+            "name": "considerLeftTime",
+            "in": "formData",
+            "type": "boolean",
+            "description": "Учитывать ли прошедшее время (от текущего дня) при возврате интервалов",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "404": {
+            "description": "Не найдены автомойка / настройки автомойки"
+          }
+        }
+      }
+    },
+    "/common/car-brands": {
+      "get": {
+        "tags": [
+          "common"
+        ],
+        "summary": "Получение марок автомобилей",
+        "description": "Список марок авто",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "query",
+            "type": "string",
+            "description": "ID-Автомойки",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          }
+        }
+      }
+    },
+    "/common/car-models": {
+      "get": {
+        "tags": [
+          "common"
+        ],
+        "summary": "Получение данных о моделях автомобилей",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "query",
+            "type": "integer",
+            "description": "ID-Автомойки",
+            "required": true
+          },
+          {
+            "name": "carBrandId",
+            "in": "query",
+            "type": "integer",
+            "description": "Если указано, выводит только модели относящиеся к определенной марке",
+            "required": false
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "type": "string",
+            "description": "Часть названия для поиска",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          }
+        }
+      }
+    },
+    "/common/validate-order-time": {
+      "post": {
+        "tags": [
+          "common"
+        ],
+        "summary": "Проверка времени записи, свободно ли оно",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-автомойки",
+            "required": true
+          },
+          {
+            "name": "post",
+            "in": "formData",
+            "type": "integer",
+            "description": "Номер поста",
+            "required": true
+          },
+          {
+            "name": "orderId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-заказа, в случае, если редактируем существующий заказ",
+            "required": false
+          },
+          {
+            "name": "date",
+            "in": "formData",
+            "type": "string",
+            "description": "Дата записи",
+            "required": true
+          },
+          {
+            "name": "startTime",
+            "in": "formData",
+            "type": "integer",
+            "description": "Время начала записи. В минутах, с начала дня. Мин. = 0 ; Макс. = 1440",
+            "required": true
+          },
+          {
+            "name": "endTime",
+            "in": "formData",
+            "type": "integer",
+            "description": "Время окончания записи. В минутах, с начала дня. Мин. = 0 ; Макс. = 1440. Если время окончания меньше, чем начала, это означает, что заказ заканчивается завтра",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Указывает, пересекается заказ с другими или нет"
+          },
+          "404": {
+            "description": "Заказ не найден"
+          },
+          "403": {
+            "description": "Нет доступа"
+          },
+          "400": {
+            "description": "Неверные параметры / время начала и окончания совпадает"
+          }
+        }
+      }
+    },
+    "/journal/orders-list": {
+      "post": {
+        "tags": [
+          "journal"
+        ],
+        "summary": "Получение списка заказов за определенный день",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-Автомойки",
+            "required": true
+          },
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "formData",
+            "type": "string",
+            "description": "Токен доступа",
+            "required": true
+          },
+          {
+            "name": "date",
+            "in": "formData",
+            "type": "string",
+            "description": "Дата в формате: 2021-12-30",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список заказов за день"
+          },
+          "403": {
+            "description": "В доступе отказано"
+          },
+          "404": {
+            "description": "Не найдены автомойка или сотрудник"
+          },
+          "420": {
+            "description": "Неверный токен доступа"
+          }
+        }
+      }
+    },
+    "/journal/settings": {
+      "post": {
+        "tags": [
+          "journal"
+        ],
+        "summary": "",
+        "description": "Получение настроек автомойки. Данные о времени работы, количестве постов, и рабочий ли это день",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-автомойки",
+            "required": true
+          },
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "date",
+            "in": "formData",
+            "type": "string",
+            "description": "Выбранная дата. Формат: 2021-12-30",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "403": {
+            "description": "Нет доступа"
+          },
+          "404": {
+            "description": "Сотрудник или автомойка не найдены"
+          }
+        }
+      }
+    },
+    "/journal/update-order": {
+      "post": {
+        "tags": [
+          "journal"
+        ],
+        "summary": "Изменение заказа на странице журнала (изменение времени, перетаскивание)",
+        "description": "Данный метод не проверяет, есть ли пересечение у заказа с другими. Это обсуждаемо. Предполагается, что валидация происходит на стороне клиента, т.к. жесткого запрета на пересечение заказов у нас нет",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-Автомойки",
+            "required": true
+          },
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "formData",
+            "type": "string",
+            "description": "Токен доступа",
+            "required": true
+          },
+          {
+            "name": "orderId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-заказа",
+            "required": true
+          },
+          {
+            "name": "post",
+            "in": "formData",
+            "type": "number",
+            "description": "Номер поста",
+            "required": true
+          },
+          {
+            "name": "startAt",
+            "in": "formData",
+            "type": "string",
+            "description": "Выбранное время начала. Формат: 22:10 (H:i). Обсуждаемо, если удобнее в минутах",
+            "required": true
+          },
+          {
+            "name": "endAt",
+            "in": "formData",
+            "type": "string",
+            "description": "Выбранное время окончания. Формат: 22:20 (H:i). Обсуждаемо, если удобнее в минутах",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "420": {
+            "description": "Токен доступа не совпал"
+          },
+          "404": {
+            "description": "Сотрудник не найден | Заказ не найден на данной автомойке | Не удалось найти настройки автомойки"
+          },
+          "400": {
+            "description": "Неверные параметры"
+          },
+          "500": {
+            "description": "Произошла ошибка при записи изменений заказа"
+          }
+        }
+      }
+    },
+    "/orders/create": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Создание заказа",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-Автомойки",
+            "required": true
+          },
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "formData",
+            "type": "string",
+            "description": "Токен доступа",
+            "required": true
+          },
+          {
+            "name": "date",
+            "in": "formData",
+            "type": "string",
+            "description": "Дата в формате: 2021-12-30",
+            "required": true
+          },
+          {
+            "name": "post",
+            "in": "formData",
+            "type": "number",
+            "description": "Номер поста для записи",
+            "required": true
+          },
+          {
+            "name": "startTime",
+            "in": "formData",
+            "type": "string",
+            "description": "Время начала для записи. Как число минут от 0 до 1440",
+            "required": true
+          },
+          {
+            "name": "endTime",
+            "in": "formData",
+            "type": "string",
+            "description": "Время окончания для записи. Как число минут от 0 до 1440",
+            "required": true
+          },
+          {
+            "name": "carType",
+            "in": "formData",
+            "type": "number",
+            "description": "Тип автомобиля (1-5)",
+            "required": true
+          },
+          {
+            "name": "carNumber",
+            "in": "formData",
+            "type": "string",
+            "description": "A123AA - Номер автомобиля",
+            "required": false
+          },
+          {
+            "name": "carRegion",
+            "in": "formData",
+            "type": "number",
+            "description": "Регион",
+            "required": false
+          },
+          {
+            "name": "color",
+            "in": "formData",
+            "type": "string",
+            "description": "Цвет автомобиля",
+            "required": false
+          },
+          {
+            "name": "carBrandId",
+            "in": "formData",
+            "type": "integer",
+            "description": "Марка автомобиля - ID",
+            "required": false
+          },
+          {
+            "name": "carModelId",
+            "in": "formData",
+            "type": "integer",
+            "description": "Модель автомобиля - ID",
+            "required": false
+          },
+          {
+            "name": "clientFullname",
+            "in": "formData",
+            "type": "string",
+            "description": "ФИО Клиента",
+            "required": false
+          },
+          {
+            "name": "clientPhone",
+            "in": "formData",
+            "type": "string",
+            "description": "Телефон клиента. До 32-символов",
+            "required": false
+          },
+          {
+            "name": "totalPrice",
+            "in": "formData",
+            "type": "integer",
+            "description": "Итоговая цена заказа (с учетом скидки)",
+            "required": true
+          },
+          {
+            "name": "sale",
+            "in": "formData",
+            "type": "integer",
+            "description": "Рассчитанная скидка",
+            "required": false
+          },
+          {
+            "name": "workTime",
+            "in": "formData",
+            "type": "integer",
+            "description": "Время работы в минутах",
+            "required": false
+          },
+          {
+            "name": "status",
+            "in": "formData",
+            "type": "integer",
+            "description": "Статус заказа. Статусы описаны в документации. По-умолчанию, заказ `новый из автомойки`",
+            "required": false
+          },
+          {
+            "name": "adminComment",
+            "in": "formData",
+            "type": "string",
+            "description": "Комментарий администратора",
+            "required": false
+          },
+          {
+            "name": "clientComment",
+            "in": "formData",
+            "type": "string",
+            "description": "Комментарий клиента",
+            "required": false
+          },
+          {
+            "name": "assignedPersonal",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-назначенного сотрудника",
+            "required": false
+          },
+          {
+            "name": "assignedPersonalFullname",
+            "in": "formData",
+            "type": "string",
+            "description": "ФИО назначенного сотрудника",
+            "required": false
+          },
+          {
+            "name": "ComplexesList",
+            "in": "formData",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Массив ID комплексов в заказе",
+            "required": false
+          },
+          {
+            "name": "ServicesList",
+            "in": "formData",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Массив ID услуг в заказе",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "404": {
+            "description": "Не найдены требуемые модели / сотрудник / автомойка"
+          },
+          "420": {
+            "description": "Неверный токен"
+          },
+          "500": {
+            "description": "Ошибка сервера"
+          },
+          "400": {
+            "description": "Неверные параметры"
+          }
+        }
+      }
+    },
+    "/orders/auto-create": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Создание быстрого заказа",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-Автомойки",
+            "required": true
+          },
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "formData",
+            "type": "string",
+            "description": "Токен доступа",
+            "required": true
+          },
+          {
+            "name": "date",
+            "in": "formData",
+            "type": "string",
+            "description": "Дата в формате: 2021-12-30",
+            "required": true
+          },
+          {
+            "name": "startTime",
+            "in": "formData",
+            "type": "string",
+            "description": "Время начала для записи. Как число минут от 0 до 1440",
+            "required": true
+          },
+          {
+            "name": "carType",
+            "in": "formData",
+            "type": "number",
+            "description": "Тип автомобиля (1-5)",
+            "required": true
+          },
+          {
+            "name": "carNumber",
+            "in": "formData",
+            "type": "string",
+            "description": "A123AA - Номер автомобиля",
+            "required": false
+          },
+          {
+            "name": "carRegion",
+            "in": "formData",
+            "type": "number",
+            "description": "Регион",
+            "required": false
+          },
+          {
+            "name": "totalPrice",
+            "in": "formData",
+            "type": "integer",
+            "description": "Итоговая цена заказа (с учетом скидки)",
+            "required": true
+          },
+          {
+            "name": "sale",
+            "in": "formData",
+            "type": "integer",
+            "description": "Рассчитанная скидка",
+            "required": false
+          },
+          {
+            "name": "workTime",
+            "in": "formData",
+            "type": "integer",
+            "description": "Время работы в минутах",
+            "required": false
+          },
+          {
+            "name": "ComplexesList",
+            "in": "formData",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Массив ID комплексов в заказе",
+            "required": false
+          },
+          {
+            "name": "ServicesList",
+            "in": "formData",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Массив ID услуг в заказе",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "404": {
+            "description": "Не найдены требуемые модели / сотрудник / автомойка"
+          },
+          "405": {
+            "description": "Невозможно создать заказ, так как он пересекается с другими (все посты заняты)"
+          },
+          "420": {
+            "description": "Неверный токен"
+          },
+          "500": {
+            "description": "Ошибка сервера"
+          },
+          "400": {
+            "description": "Неверные параметры"
+          }
+        }
+      }
+    },
+    "/orders/edit": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Изменение заказа",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-заказа",
+            "required": true
+          },
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-Автомойки",
+            "required": true
+          },
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "formData",
+            "type": "string",
+            "description": "Токен доступа",
+            "required": true
+          },
+          {
+            "name": "date",
+            "in": "formData",
+            "type": "string",
+            "description": "Дата в формате: 2021-12-30",
+            "required": true
+          },
+          {
+            "name": "post",
+            "in": "formData",
+            "type": "number",
+            "description": "Номер поста для записи",
+            "required": true
+          },
+          {
+            "name": "startTime",
+            "in": "formData",
+            "type": "string",
+            "description": "Время начала для записи. Как число минут от 0 до 1440",
+            "required": true
+          },
+          {
+            "name": "endTime",
+            "in": "formData",
+            "type": "string",
+            "description": "Время окончания для записи. Как число минут от 0 до 1440",
+            "required": true
+          },
+          {
+            "name": "carType",
+            "in": "formData",
+            "type": "number",
+            "description": "Тип автомобиля (1-5)",
+            "required": true
+          },
+          {
+            "name": "carNumber",
+            "in": "formData",
+            "type": "string",
+            "description": "A123AA - Номер автомобиля",
+            "required": false
+          },
+          {
+            "name": "carRegion",
+            "in": "formData",
+            "type": "number",
+            "description": "Регион",
+            "required": false
+          },
+          {
+            "name": "color",
+            "in": "formData",
+            "type": "string",
+            "description": "Цвет автомобиля",
+            "required": false
+          },
+          {
+            "name": "carBrandId",
+            "in": "formData",
+            "type": "integer",
+            "description": "Марка автомобиля - ID",
+            "required": false
+          },
+          {
+            "name": "carModelId",
+            "in": "formData",
+            "type": "integer",
+            "description": "Модель автомобиля - ID",
+            "required": false
+          },
+          {
+            "name": "clientFullname",
+            "in": "formData",
+            "type": "string",
+            "description": "ФИО Клиента",
+            "required": false
+          },
+          {
+            "name": "clientPhone",
+            "in": "formData",
+            "type": "string",
+            "description": "Телефон клиента. До 32-символов",
+            "required": false
+          },
+          {
+            "name": "totalPrice",
+            "in": "formData",
+            "type": "integer",
+            "description": "Итоговая цена заказа (с учетом скидки)",
+            "required": true
+          },
+          {
+            "name": "sale",
+            "in": "formData",
+            "type": "integer",
+            "description": "Рассчитанная скидка",
+            "required": false
+          },
+          {
+            "name": "workTime",
+            "in": "formData",
+            "type": "integer",
+            "description": "Время работы в минутах",
+            "required": false
+          },
+          {
+            "name": "status",
+            "in": "formData",
+            "type": "integer",
+            "description": "Статус заказа. Статусы описаны в документации. По-умолчанию, заказ `новый из автомойки`",
+            "required": false
+          },
+          {
+            "name": "adminComment",
+            "in": "formData",
+            "type": "string",
+            "description": "Комментарий администратора",
+            "required": false
+          },
+          {
+            "name": "clientComment",
+            "in": "formData",
+            "type": "string",
+            "description": "Комментарий клиента",
+            "required": false
+          },
+          {
+            "name": "ComplexesList",
+            "in": "formData",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Массив ID комплексов в заказе. Если не переданы - удаляют уже существующие",
+            "required": false
+          },
+          {
+            "name": "ServicesList",
+            "in": "formData",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Массив ID услуг в заказе. Если не переданы - удаляют уже существующие",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "404": {
+            "description": "Не найдены требуемые модели / сотрудник / автомойка / заказ"
+          },
+          "420": {
+            "description": "Неверный токен"
+          },
+          "500": {
+            "description": "Ошибка сервера"
+          },
+          "400": {
+            "description": "Неверные параметры"
+          }
+        }
+      }
+    },
+    "/orders/show": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Просмотр заказа",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "type": "string",
+            "description": "ID-заказа",
+            "required": true
+          },
+          {
+            "name": "pId",
+            "in": "query",
+            "type": "string",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "type": "string",
+            "description": "Токен доступа",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "403": {
+            "description": "Нет доступа к заказу"
+          },
+          "404": {
+            "description": "Не найдены базовые модели"
+          },
+          "420": {
+            "description": "Токен доступа не совпал"
+          }
+        }
+      }
+    },
+    "/orders/calculate-price": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Расчет стоимости заказа с учетом скидки и включенных услуг",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-Автомойки",
+            "required": true
+          },
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "carType",
+            "in": "formData",
+            "type": "number",
+            "description": "Тип автомобиля (1-5)",
+            "required": true
+          },
+          {
+            "name": "servicesIds",
+            "in": "formData",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Массив id включенных услуг",
+            "required": false
+          },
+          {
+            "name": "complexesIds",
+            "in": "formData",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Массив id включенных комплексов",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "404": {
+            "description": "Сотрудник не найден | Заказ не найден на данной автомойке | Не удалось найти настройки автомойки"
+          }
+        }
+      }
+    },
+    "/orders/change-status": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Изменение статуса заказа (архивирование / взятие в работу)",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-заказа",
+            "required": true
+          },
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "status",
+            "in": "formData",
+            "type": "integer",
+            "description": "Новый статус заказа",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "404": {
+            "description": "Не найдены базовые модели"
+          },
+          "403": {
+            "description": "Нет доступа к заказу"
+          },
+          "400": {
+            "description": "Передан неверный статус для заказа"
+          },
+          "500": {
+            "description": "Не удалось обновить статус заказа. Ошибка сервера"
+          }
+        }
+      }
+    },
+    "/orders/delete": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Удаление заказа",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-заказа",
+            "required": true
+          },
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "formData",
+            "type": "string",
+            "description": "Токен доступа",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "404": {
+            "description": "Не найдены базовые модели"
+          },
+          "403": {
+            "description": "Нет доступа к заказу"
+          },
+          "420": {
+            "description": "Токен доступа не совпал"
+          }
+        }
+      }
+    },
+    "/personal/permissions": {
+      "post": {
+        "tags": [
+          "personal"
+        ],
+        "summary": "Получение сведений о правах доступа для пользователя. Возвращаются все права. На данный момент, они не уникальны для разных платформ",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "formData",
+            "type": "string",
+            "description": "Токен доступа",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "420": {
+            "description": "Токен доступа не совпал"
+          }
+        }
+      }
+    },
+    "/personal/list": {
+      "post": {
+        "tags": [
+          "personal"
+        ],
+        "summary": "Получение списка сотрудников автомойки (те, кого можно назначить на исполнение заказа)",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-автомойки",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "formData",
+            "type": "string",
+            "description": "Токен доступа",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "403": {
+            "description": "Нет доступа"
+          },
+          "404": {
+            "description": "Не удалось найти все требуемые модели"
+          },
+          "420": {
+            "description": "Токен доступа не совпал"
+          }
+        }
+      }
+    },
+    "/personal/profile": {
+      "get": {
+        "tags": [
+          "personal"
+        ],
+        "summary": "Получение конкретного профиля сотрудника",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "pId",
+            "in": "query",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "type": "string",
+            "description": "Токен доступа",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "404": {
+            "description": "Не удалось найти все требуемые модели"
+          },
+          "420": {
+            "description": "Токен доступа не совпал"
+          }
+        }
+      }
+    },
+    "/personal/edit-profile": {
+      "post": {
+        "tags": [
+          "personal"
+        ],
+        "summary": "Изменение данных профиля",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "formData",
+            "type": "string",
+            "description": "Токен доступа",
+            "required": true
+          },
+          {
+            "name": "firstname",
+            "in": "formData",
+            "type": "string",
+            "description": "Имя",
+            "required": false
+          },
+          {
+            "name": "lastname",
+            "in": "formData",
+            "type": "string",
+            "description": "Фамилия",
+            "required": false
+          },
+          {
+            "name": "patronymic",
+            "in": "formData",
+            "type": "string",
+            "description": "Отчество",
+            "required": false
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "type": "string",
+            "description": "Email (без подтверждения изменения)",
+            "required": false
+          },
+          {
+            "name": "phone",
+            "in": "formData",
+            "type": "string",
+            "description": "Телефон",
+            "required": false
+          },
+          {
+            "name": "firebaseToken",
+            "in": "formData",
+            "type": "string",
+            "description": "Токен Firebase",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "404": {
+            "description": "Не удалось найти все требуемые модели"
+          },
+          "420": {
+            "description": "Токен доступа не совпал"
+          }
+        }
+      }
+    },
+    "/personal/upload-image": {
+      "post": {
+        "tags": [
+          "personal"
+        ],
+        "summary": "Обновление аватара пользователя",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "formData",
+            "type": "string",
+            "description": "Токен доступа",
+            "required": true
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "type": "file",
+            "description": "Аватар (jpg, png, jpeg). До 4mb",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "404": {
+            "description": "Не удалось найти все требуемые модели"
+          },
+          "420": {
+            "description": "Токен доступа не совпал"
+          }
+        }
+      }
+    },
+    "/personal/lang": {
+      "post": {
+        "tags": [
+          "personal"
+        ],
+        "summary": "Обновление языка пользователя",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "formData",
+            "type": "string",
+            "description": "Токен доступа",
+            "required": true
+          },
+          {
+            "name": "lang",
+            "in": "formData",
+            "type": "integer",
+            "description": "Id-языка",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "404": {
+            "description": "Не удалось найти все требуемые модели"
+          },
+          "420": {
+            "description": "Токен доступа не совпал"
+          }
+        }
+      }
+    },
+    "/services/list": {
+      "post": {
+        "tags": [
+          "services"
+        ],
+        "summary": "Список услуг",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-автомойки",
+            "required": true
+          },
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "carType",
+            "in": "formData",
+            "type": "number",
+            "description": "Тип автомобиля (1-5)",
+            "required": true
+          },
+          {
+            "name": "serviceType",
+            "in": "formData",
+            "type": "number",
+            "description": "1 - услуги; 2 - комплексы",
+            "required": false
+          },
+          {
+            "name": "isDetailing",
+            "in": "formData",
+            "type": "boolean",
+            "description": "",
+            "required": false
+          },
+          {
+            "name": "query",
+            "in": "formData",
+            "type": "string",
+            "description": "Часть названия услуги",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "400": {
+            "description": "Не все обязательные параметры переданы"
+          }
+        }
+      }
+    },
+    "/services/info-services": {
+      "post": {
+        "tags": [
+          "services"
+        ],
+        "summary": "Информация по услугам",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-автомойки",
+            "required": true
+          },
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "carType",
+            "in": "formData",
+            "type": "number",
+            "description": "Тип автомобиля (1-5)",
+            "required": true
+          },
+          {
+            "name": "serviceType",
+            "in": "formData",
+            "type": "number",
+            "description": "1 - услуги; 2 - комплексы",
+            "required": false
+          },
+          {
+            "name": "isDetailing",
+            "in": "formData",
+            "type": "boolean",
+            "description": "",
+            "required": false
+          },
+          {
+            "name": "query",
+            "in": "formData",
+            "type": "string",
+            "description": "Часть названия услуги",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "400": {
+            "description": "Не все обязательные параметры переданы"
+          }
+        }
+      }
+    },
+    "/services/info-sales": {
+      "post": {
+        "tags": [
+          "services"
+        ],
+        "summary": "Информация по скидкам",
+        "description": "",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cwId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-автомойки",
+            "required": true
+          },
+          {
+            "name": "pId",
+            "in": "formData",
+            "type": "integer",
+            "description": "ID-сотрудника",
+            "required": true
+          },
+          {
+            "name": "carType",
+            "in": "formData",
+            "type": "number",
+            "description": "Тип автомобиля (1-5)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Выполнено успешно"
+          },
+          "400": {
+            "description": "Не все обязательные параметры переданы"
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Подробнее у разработчика :)",
+    "url": "http://swagger.io"
+  }
+}

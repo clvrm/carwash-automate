@@ -1,0 +1,37 @@
+services:
+  php:
+    image: yiisoftware/yii2-php:7.4-apache
+    ports:
+      - '8000:80'
+    volumes:
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      - ./:/app:delegated
+    environment:
+      DB_HOST: mysql
+      DB_USER: carwash
+      DB_PASSWORD: carwash
+      APP_BASE_URL: http://localhost:8000
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: carwash
+      MYSQL_USER: carwash
+      MYSQL_PASSWORD: carwash
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+      - carwash_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-uroot', '-proot']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  carwash_mysql_data:

@@ -1,0 +1,53 @@
+.auth-account_image {
+    height: 48px;
+    width: 48px;
+    display: block;
+    margin-left: 40px;
+}
+
+.auth-account_info {
+    margin-left: 20px;
+}
+
+.auth-account_image img {
+    width: 100%;
+    height: auto;
+}
+
+.auth-account_item {
+    border: 1px solid transparent;
+    border-bottom: 1px solid #e2e2e2;
+    cursor: pointer;
+}
+
+.auth-account_item.selected-account {
+    border: 2px solid #0260e8;
+    border-radius: 10px;
+}
+
+.auth-account_item:hover:not(.selected-account) {
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    background: #fbfbfb;
+}
+
+
+.auth-account_info > p {
+    color: #b2b2b2;
+}
+
+.auth-confidence-agree {
+    display: flex;
+}
+
+@media screen and (max-width: 768px) {
+    .card.card-custom {
+        /*height: 85vh !important;*/
+    }
+}
+
+@media screen and (max-width: 575.98px) {
+    .auth-confidence-agree {
+        display: block;
+    }
+}
