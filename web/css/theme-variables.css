@@ -1,0 +1,54 @@
+/**
+ * Stepcar — фирменная палитра (автомойка + деловой CRM).
+ * Меняйте цвета здесь; остальные стили ссылаются на var(--sc-*).
+ */
+:root {
+    /* Основной — глубокий бирюзовый (вода, чистота, надёжность) */
+    --sc-primary: #0E6B84;
+    --sc-primary-hover: #0B5570;
+    --sc-primary-active: #09485F;
+    --sc-primary-light: #E0F4F8;
+    --sc-primary-rgb: 14, 107, 132;
+
+    /* Нейтральные */
+    --sc-secondary: #E8EDF2;
+    --sc-secondary-text: #475569;
+
+    /* Семантические */
+    --sc-success: #0D7C66;
+    --sc-success-hover: #0A6554;
+    --sc-success-light: #D1FAE5;
+
+    --sc-info: #0369A1;
+    --sc-info-light: #E0F2FE;
+
+    --sc-warning: #B45309;
+    --sc-warning-light: #FEF3C7;
+
+    --sc-danger: #B91C1C;
+    --sc-danger-light: #FEE2E2;
+
+    --sc-light: #F1F5F9;
+    --sc-dark: #1E293B;
+
+    /* Серые — слегка холодные, в тон водной теме */
+    --sc-gray-100: #F1F5F9;
+    --sc-gray-200: #E2E8F0;
+    --sc-gray-300: #CBD5E1;
+    --sc-gray-400: #94A3B8;
+    --sc-gray-500: #64748B;
+    --sc-gray-600: #475569;
+    --sc-gray-700: #334155;
+    --sc-gray-800: #1E293B;
+    --sc-gray-900: #0F172A;
+
+    /* Алиасы Bootstrap / Metronic */
+    --primary: var(--sc-primary);
+    --secondary: var(--sc-secondary);
+    --success: var(--sc-success);
+    --info: var(--sc-info);
+    --warning: var(--sc-warning);
+    --danger: var(--sc-danger);
+    --light: var(--sc-light);
+    --dark: var(--sc-dark);
+}

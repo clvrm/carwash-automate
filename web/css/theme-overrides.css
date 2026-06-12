@@ -1,0 +1,157 @@
+/**
+ * Переопределения Metronic/Bootstrap — цвета из theme-variables.css.
+ */
+
+/* --- Primary --- */
+.btn-primary,
+.btn-primary.disabled,
+.btn-primary:disabled {
+    background-color: var(--sc-primary);
+    border-color: var(--sc-primary);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary.focus {
+    background-color: var(--sc-primary-hover);
+    border-color: var(--sc-primary-hover);
+    box-shadow: 0 0 0 0.2rem rgba(var(--sc-primary-rgb), 0.35);
+}
+
+.btn-primary:not(:disabled):not(.disabled):active,
+.btn-primary:not(:disabled):not(.disabled).active,
+.show > .btn-primary.dropdown-toggle {
+    background-color: var(--sc-primary-active);
+    border-color: var(--sc-primary-active);
+}
+
+.btn-outline-primary {
+    color: var(--sc-primary);
+    border-color: var(--sc-primary);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary.active {
+    background-color: var(--sc-primary);
+    border-color: var(--sc-primary);
+}
+
+.btn.btn-light-primary {
+    color: var(--sc-primary);
+    background-color: var(--sc-primary-light);
+}
+
+.btn.btn-light-primary i,
+.btn.btn-light-primary .svg-icon svg g [fill],
+.btn.btn-light-primary.dropdown-toggle:after {
+    color: var(--sc-primary);
+    fill: var(--sc-primary);
+}
+
+.btn.btn-light-primary:hover:not(.btn-text):not(:disabled):not(.disabled),
+.btn.btn-light-primary:focus:not(.btn-text),
+.btn.btn-light-primary.focus:not(.btn-text) {
+    color: #fff;
+    background-color: var(--sc-primary);
+    border-color: var(--sc-primary);
+}
+
+.text-primary {
+    color: var(--sc-primary) !important;
+}
+
+.text-hover-primary:hover {
+    color: var(--sc-primary) !important;
+}
+
+.bg-primary {
+    background-color: var(--sc-primary) !important;
+}
+
+.bg-light-primary,
+.bg-hover-light-primary:hover {
+    background-color: var(--sc-primary-light) !important;
+}
+
+.border-primary {
+    border-color: var(--sc-primary) !important;
+}
+
+.alert-primary {
+    color: var(--sc-primary-active);
+    background-color: var(--sc-primary-light);
+    border-color: var(--sc-primary-light);
+}
+
+.badge-primary {
+    background-color: var(--sc-primary);
+}
+
+.badge-light-primary {
+    color: var(--sc-primary);
+    background-color: var(--sc-primary-light);
+}
+
+.spinner.spinner-primary:before,
+.spinner.spinner-track.spinner-primary:before {
+    border-color: var(--sc-primary);
+    border-right-color: transparent;
+}
+
+a.text-primary:hover,
+a.text-hover-primary:hover {
+    color: var(--sc-primary-hover) !important;
+}
+
+/* --- Success --- */
+.btn-success {
+    background-color: var(--sc-success);
+    border-color: var(--sc-success);
+}
+
+.btn-success:hover,
+.btn-success:focus {
+    background-color: var(--sc-success-hover);
+    border-color: var(--sc-success-hover);
+}
+
+.text-success {
+    color: var(--sc-success) !important;
+}
+
+.bg-light-success {
+    background-color: var(--sc-success-light) !important;
+}
+
+/* --- Warning --- */
+.text-warning {
+    color: var(--sc-warning) !important;
+}
+
+.bg-light-warning {
+    background-color: var(--sc-warning-light) !important;
+}
+
+/* --- Danger --- */
+.btn-danger {
+    background-color: var(--sc-danger);
+    border-color: var(--sc-danger);
+}
+
+.text-danger {
+    color: var(--sc-danger) !important;
+}
+
+.bg-light-danger {
+    background-color: var(--sc-danger-light) !important;
+}
+
+/* --- Info --- */
+.text-info {
+    color: var(--sc-info) !important;
+}
+
+.bg-light-info {
+    background-color: var(--sc-info-light) !important;
+}
