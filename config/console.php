@@ -12,7 +12,7 @@ $config = [
     'aliases' => $aliases,
     'components' => [
         'authManager' => [
-            'class' => 'yii\rbac\DbManager',
+            'class' => 'app\commons\yii\DbManager',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',

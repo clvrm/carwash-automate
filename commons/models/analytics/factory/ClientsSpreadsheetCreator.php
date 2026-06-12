@@ -8,7 +8,6 @@ use app\commons\helpers\ClientHelper;
 use app\models\ar\order\Orders;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use yii\base\BaseObject;
-use yii\db\Expression;
 use yii\db\Query;
 use Yii;
 
@@ -58,11 +57,10 @@ class ClientsSpreadsheetCreator extends SpreadsheetCreator
                 ->count();
 
             $totalOrdersSum = (new Query())
-                ->select('SUM(total_price) as total')
+                ->select(['total' => 'SUM(total_price)'])
                 ->from('orders')
                 ->where(['carwash_id' => Yii::$app->user->identity->getCWid()])
                 ->andWhere(['car_number' => $order->car_number, 'car_region' => $order->car_region])
-                ->groupBy(new Expression("CONCAT(orders.car_number, orders.car_region)"))
                 ->one();
             $totalOrdersSum = $totalOrdersSum['total'] ?? 0;
 

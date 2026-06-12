@@ -83,10 +83,16 @@ class AnalyticsController extends Controller
      */
     private function calculateOrdersByYear($fromDate, $toDate, $carwashId)
     {
-        $data = Yii::$app->getDb()->createCommand("SELECT COUNT(id) as count, MONTH(`date`) as date FROM orders 
-WHERE `carwash_id` = '$carwashId' AND `date` BETWEEN '$fromDate' AND '$toDate'
+        $data = Yii::$app->getDb()->createCommand(
+            'SELECT COUNT(id) as count, MONTH(`date`) as date FROM orders
+WHERE carwash_id = :carwashId AND `date` BETWEEN :fromDate AND :toDate
 GROUP BY MONTH(`date`)
-ORDER BY `date` DESC")->query()->readAll();
+ORDER BY `date` DESC'
+        )->bindValues([
+            ':carwashId' => $carwashId,
+            ':fromDate' => $fromDate,
+            ':toDate' => $toDate,
+        ])->queryAll();
         $ordersMap = ArrayHelper::map($data, 'date', 'count');
 
         $chartCategories = [];
@@ -120,10 +126,16 @@ ORDER BY `date` DESC")->query()->readAll();
      */
     private function calculateOrdersByMonth($fromDate, $toDate, $carwashId)
     {
-        $data = Yii::$app->getDb()->createCommand("SELECT COUNT(id) as count, date as date FROM orders 
-WHERE `carwash_id` = '$carwashId' AND `date` BETWEEN '$fromDate' AND '$toDate'
+        $data = Yii::$app->getDb()->createCommand(
+            'SELECT COUNT(id) as count, `date` as date FROM orders
+WHERE carwash_id = :carwashId AND `date` BETWEEN :fromDate AND :toDate
 GROUP BY `date`
-ORDER BY `date` DESC")->query()->readAll();
+ORDER BY `date` DESC'
+        )->bindValues([
+            ':carwashId' => $carwashId,
+            ':fromDate' => $fromDate,
+            ':toDate' => $toDate,
+        ])->queryAll();
         $ordersMap = ArrayHelper::map($data, 'date', 'count');
 
         $limit = 4;
@@ -157,10 +169,16 @@ ORDER BY `date` DESC")->query()->readAll();
      */
     private function calculateOrdersByWeek($fromDate, $toDate, $carwashId)
     {
-        $data = Yii::$app->getDb()->createCommand("SELECT COUNT(id) as count, date as date FROM orders 
-WHERE `carwash_id` = '$carwashId' AND `date` BETWEEN '$fromDate' AND '$toDate'
+        $data = Yii::$app->getDb()->createCommand(
+            'SELECT COUNT(id) as count, `date` as date FROM orders
+WHERE carwash_id = :carwashId AND `date` BETWEEN :fromDate AND :toDate
 GROUP BY `date`
-ORDER BY `date` DESC")->query()->readAll();
+ORDER BY `date` DESC'
+        )->bindValues([
+            ':carwashId' => $carwashId,
+            ':fromDate' => $fromDate,
+            ':toDate' => $toDate,
+        ])->queryAll();
         $ordersMap = ArrayHelper::map($data, 'date', 'count');
 
         $limit = 7;
@@ -231,8 +249,9 @@ ORDER BY `date` DESC")->query()->readAll();
             $chartClientsCount = $data['clients'];
         }
 
-        $todayOrders = Orders::find()->where(['carwash_id' => $cwId])->andWhere(['date' => $ordersFindToDate])
-            ->groupBy(new Expression("CONCAT(orders.car_number, orders.car_region)"))->count();
+        $todayOrders = (int) Orders::find()->where(['carwash_id' => $cwId])->andWhere(['date' => $ordersFindToDate])
+            ->select(new Expression('COUNT(DISTINCT CONCAT(orders.car_number, orders.car_region))'))
+            ->scalar();
 
         return ['result' => true, 'categories' => array_reverse($chartCategories), 'clients' => array_reverse($chartClientsCount),
             'subscribers' => array_reverse($chartSubscribersCount), 'todayCounts' => $todayOrders];
@@ -247,11 +266,17 @@ ORDER BY `date` DESC")->query()->readAll();
      */
     private function calculateClientsByYear($fromDate, $toDate, $carwashId)
     {
-        $data = Yii::$app->getDb()->createCommand("SELECT orders.car_number, orders.car_region, MAX(`date`) AS date
-FROM orders 
-WHERE `carwash_id` = '$carwashId' AND `date` BETWEEN '$fromDate' AND '$toDate'
+        $data = Yii::$app->getDb()->createCommand(
+            'SELECT orders.car_number, orders.car_region, MAX(`date`) AS date
+FROM orders
+WHERE carwash_id = :carwashId AND `date` BETWEEN :fromDate AND :toDate
 GROUP BY orders.car_number, orders.car_region
-ORDER BY `date` DESC")->query()->readAll();
+ORDER BY `date` DESC'
+        )->bindValues([
+            ':carwashId' => $carwashId,
+            ':fromDate' => $fromDate,
+            ':toDate' => $toDate,
+        ])->queryAll();
 
         $ordersMap = [];
         foreach ($data as $datum) {
@@ -307,11 +332,17 @@ ORDER BY `date` DESC")->query()->readAll();
      */
     private function calculateClientsByMonth($fromDate, $toDate, $carwashId)
     {
-        $data = Yii::$app->getDb()->createCommand("SELECT orders.car_number, orders.car_region, MAX(`date`) AS date
-FROM orders 
-WHERE `carwash_id` = '$carwashId' AND `date` BETWEEN '$fromDate' AND '$toDate'
+        $data = Yii::$app->getDb()->createCommand(
+            'SELECT orders.car_number, orders.car_region, MAX(`date`) AS date
+FROM orders
+WHERE carwash_id = :carwashId AND `date` BETWEEN :fromDate AND :toDate
 GROUP BY orders.car_number, orders.car_region
-ORDER BY `date` DESC")->query()->readAll();
+ORDER BY `date` DESC'
+        )->bindValues([
+            ':carwashId' => $carwashId,
+            ':fromDate' => $fromDate,
+            ':toDate' => $toDate,
+        ])->queryAll();
 
         $ordersMap = [];
         foreach ($data as $datum) {
@@ -367,12 +398,17 @@ ORDER BY `date` DESC")->query()->readAll();
      */
     private function calculateClientsByWeek($fromDate, $toDate, $carwashId)
     {
-        // Работа с подзапросом, в котором происходит нужная сортировка
-        $data = Yii::$app->getDb()->createCommand("SELECT orders.car_number, orders.car_region, MAX(`date`) AS date
-FROM orders 
-WHERE `carwash_id` = '$carwashId' AND `date` BETWEEN '$fromDate' AND '$toDate'
+        $data = Yii::$app->getDb()->createCommand(
+            'SELECT orders.car_number, orders.car_region, MAX(`date`) AS date
+FROM orders
+WHERE carwash_id = :carwashId AND `date` BETWEEN :fromDate AND :toDate
 GROUP BY orders.car_number, orders.car_region
-ORDER BY `date` DESC")->query()->readAll();
+ORDER BY `date` DESC'
+        )->bindValues([
+            ':carwashId' => $carwashId,
+            ':fromDate' => $fromDate,
+            ':toDate' => $toDate,
+        ])->queryAll();
 
         $ordersMap = [];
         foreach ($data as $datum) {
@@ -476,8 +512,10 @@ ORDER BY `date` DESC")->query()->readAll();
         $data = Yii::$app->getDb()->createCommand("SELECT SUM(sum) AS sum, date FROM 
 (SELECT order_service.order_id, SUM(price) as sum, MAX(o.date) as date FROM order_service
 LEFT JOIN orders AS o ON o.id = order_service.order_id
-WHERE o.date BETWEEN '" . $fromDate . "' AND '" . $toDate . "' $detailingFilter
-GROUP BY order_service.order_id) o GROUP BY date")->query()->readAll();
+WHERE o.carwash_id = :carwashId AND o.date BETWEEN :fromDate AND :toDate $detailingFilter
+GROUP BY order_service.order_id) o GROUP BY date")
+            ->bindValues([':carwashId' => $carwashId, ':fromDate' => $fromDate, ':toDate' => $toDate])
+            ->queryAll();
 
         $financeMap = ArrayHelper::map($data, 'date', 'sum');
 
@@ -514,8 +552,10 @@ GROUP BY order_service.order_id) o GROUP BY date")->query()->readAll();
         $data = Yii::$app->getDb()->createCommand("SELECT SUM(sum) AS sum, date FROM 
 (SELECT order_service.order_id, SUM(price) as sum, MAX(o.date) as date FROM order_service
 LEFT JOIN orders AS o ON o.id = order_service.order_id
-WHERE o.date BETWEEN '" . $fromDate . "' AND '" . $toDate . "' $detailingFilter
-GROUP BY order_service.order_id) o GROUP BY date")->query()->readAll();
+WHERE o.carwash_id = :carwashId AND o.date BETWEEN :fromDate AND :toDate $detailingFilter
+GROUP BY order_service.order_id) o GROUP BY date")
+            ->bindValues([':carwashId' => $carwashId, ':fromDate' => $fromDate, ':toDate' => $toDate])
+            ->queryAll();
 
         $financeMap = ArrayHelper::map($data, 'date', 'sum');
 
@@ -556,8 +596,10 @@ GROUP BY order_service.order_id) o GROUP BY date")->query()->readAll();
         $data = Yii::$app->getDb()->createCommand("SELECT SUM(sum) AS sum, date FROM 
 (SELECT order_service.order_id, SUM(price) as sum, MAX(o.date) as date FROM order_service
 LEFT JOIN orders AS o ON o.id = order_service.order_id
-WHERE o.date BETWEEN '" . $fromDate . "' AND '" . $toDate . "' $detailingFilter
-GROUP BY order_service.order_id) o GROUP BY date")->query()->readAll();
+WHERE o.carwash_id = :carwashId AND o.date BETWEEN :fromDate AND :toDate $detailingFilter
+GROUP BY order_service.order_id) o GROUP BY date")
+            ->bindValues([':carwashId' => $carwashId, ':fromDate' => $fromDate, ':toDate' => $toDate])
+            ->queryAll();
 
         $financeMap = ArrayHelper::map($data, 'date', 'sum');
 

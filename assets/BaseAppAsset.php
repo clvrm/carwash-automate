@@ -13,10 +13,12 @@ class BaseAppAsset extends AssetBundle
         '/plugins/global/plugins.bundle.css',
         '/plugins/custom/prismjs/prismjs.bundle.css',
         'css/style.bundle.css',
+        'css/theme-variables.css',
         '/css/themes/layout/header/base/light.css',
         '/css/themes/layout/header/menu/light.css',
         '/css/themes/layout/brand/light.css',
         '/css/themes/layout/aside/light.css',
+        'css/theme-overrides.css',
     ];
     public $jsOptions = ['position' => \yii\web\View::POS_HEAD];
 

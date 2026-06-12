@@ -60,65 +60,8 @@ class AuthController extends Controller
         if (!Yii::$app->user->isGuest) {
             return $this->redirect('/');
         }
-        if (\Yii::$app->request->isPost) {
-            $post = \Yii::$app->request->post();
 
-            $email = $post['email'];
-            $password = $post['password'];
-            $rememberMe = $post['rememberMe'] ?? false;
-
-            $user = Users::findOne(['email' => $email]);
-            if ($user) {
-                $error = 'Данный email уже зарегистрирован';
-            } else {
-                $api = new ClientV1(AuthConnectorFactory::create());
-                $response = $api->register($email, $password);
-
-                if (isset($response['guid'], $response['auth_token'])) {
-                    $userModel = new Users();
-                    $userModel->email = $email;
-                    $userModel->auth_token = $response['auth_token'];
-                    $userModel->guid = $response['guid'];
-                    $userModel->setPassword($password);
-
-                    if ($userModel->save()) {
-                        $userModel->refresh();
-                        // Регистрируем автомойку для владельца
-                        $carwash = new Carwash();
-                        $carwash->name = Carwash::DEFAULT_NAME;
-                        $carwash->save();
-                        $carwash->refresh();
-                        // Первичные настройки для автомойки
-                        $carwash->createDefaultSettings();
-
-                        // Регистрируем владельца, как персонал своей же автомойки
-                        $personal = new Personal();
-                        $personal->carwash_id = $carwash->id;
-                        $personal->user_id = $userModel->id;
-                        $personal->post = Personal::POST_OWNER;
-                        $personal->save();
-                        // Даем персоналу права владельца на старте
-                        Yii::$app->authManager->assign(Yii::$app->authManager->getRole('owner'), $personal->id);
-
-                        // Связываем владельца, в лице персонала с его же автомойкой
-                        $carwash->owner_id = $personal->id;
-                        $carwash->save();
-
-                        $this->auth($userModel, $rememberMe);
-                        $mailSender = new MailSender();
-                        $mailSender->sendRegisterEmail($email, $userModel->id, $personal->id);
-
-                        return $this->redirect(['/auth/register-success', 'email' => $email]);
-                    }
-                } else {
-                    $error = $response;
-                }
-            }
-        }
-
-        return $this->render('register', [
-            'error' => $error ?? ''
-        ]);
+        return $this->render('register');
     }
 
     /**

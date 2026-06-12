@@ -48,7 +48,10 @@ $this->title = 'Вход';
                 </div>
 
                 <button type="submit" class="btn btn-lg btn-block btn-primary mb-5">Войти</button>
-                <p>Вы впервые? <a href="/auth/register">Зарегистрируйтесь</a></p>
+                <p class="text-muted text-center mb-0">
+                    <i class="flaticon2-lock mr-1"></i>
+                    Регистрация доступна только через администратора
+                </p>
                 <?php ActiveForm::end(); ?>
             </div>
             <!--end: Card Body-->

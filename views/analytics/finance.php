@@ -192,6 +192,21 @@ $this->params['header_button'] = '<div class="d-block mr-12">
 </div>
 <script>
     $(document).ready(function () {
+        (function () {
+            let url = new URL(document.location);
+            let changed = false;
+            ['dateFrom', 'dateTo'].forEach(function (key) {
+                let val = url.searchParams.get(key);
+                if (val && !/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+                    url.searchParams.delete(key);
+                    changed = true;
+                }
+            });
+            if (changed) {
+                window.history.replaceState({}, '', url.toString());
+            }
+        })();
+
         let cwId = $('#mainInfoBlock').data('cw-id');
         let pId = $('#mainInfoBlock').data('p-id');
         let chartType = 'week';
@@ -331,15 +346,15 @@ $this->params['header_button'] = '<div class="d-block mr-12">
             }
 
             setTimeout(() => {
-                let dateFrom = filterDateFrom;
-                let dateTo = filterDateTo;
                 let sort = $('#sortSelect').val();
-
-                console.log(category);
+                let url = '/analytics/finance?sort=' + sort +
+                    '&category=' + category + '&serviceType=' + serviceType;
+                if (filterDateFrom && filterDateTo) {
+                    url += '&dateFrom=' + filterDateFrom + '&dateTo=' + filterDateTo;
+                }
 
                 $.pjax.reload({
-                    url: '/analytics/finance?dateFrom=' + dateFrom + '&dateTo=' + dateTo + '&sort=' + sort +
-                        '&category=' + category + '&serviceType=' + serviceType,
+                    url: url,
                     container: "#financeList"
                 });
                 KTApp.unblock('#financeList');

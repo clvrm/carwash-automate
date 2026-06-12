@@ -5,6 +5,7 @@ namespace app\controllers;
 
 
 use app\commons\helpers\ClientHelper;
+use app\commons\helpers\TimeHelper;
 use app\commons\models\AnalyticsSpreadsheet;
 use app\models\ar\complex\Complexes;
 use app\models\ar\order\Orders;
@@ -53,16 +54,12 @@ class AnalyticsController extends Controller
         $dataType = 'personal';
 
 
-        $ordersFindFromDate = '2018-01-01';
-        $ordersFindToDate = date('Y-m-d');
-        if (\Yii::$app->request->get('dateFrom') && \Yii::$app->request->get('dateTo')) {
-            $ordersFindFromDate = \Yii::$app->request->get('dateFrom');
-            $ordersFindToDate = \Yii::$app->request->get('dateTo');
-        }
+        [$ordersFindFromDate, $ordersFindToDate] = TimeHelper::resolveDateRange('2018-01-01', date('Y-m-d'));
 
-        $query = Orders::find()->where(['orders.carwash_id' => $cwId])->andWhere(['between', 'orders.date', $ordersFindFromDate, $ordersFindToDate]);
-        $query->groupBy(new Expression("CONCAT(orders.car_number, orders.car_region)"));
-        $orders = $query->all();
+        $orders = Orders::find()
+            ->where(['orders.carwash_id' => $cwId])
+            ->andWhere(['between', 'orders.date', $ordersFindFromDate, $ordersFindToDate])
+            ->all();
 
         $serviceType = \Yii::$app->request->get('serviceType');
         $category = \Yii::$app->request->get('category');
@@ -151,13 +148,7 @@ class AnalyticsController extends Controller
     {
         $cwId = \Yii::$app->user->identity->getCWid() ?? 0;
 
-        $ordersFindFromDate = date('Y-m-d');
-        $ordersFindToDate = date('Y-m-d');
-
-        if (\Yii::$app->request->get('dateFrom') && \Yii::$app->request->get('dateTo')) {
-            $ordersFindFromDate = \Yii::$app->request->get('dateFrom');
-            $ordersFindToDate = \Yii::$app->request->get('dateTo');
-        }
+        [$ordersFindFromDate, $ordersFindToDate] = TimeHelper::resolveDateRange(date('Y-m-d'), date('Y-m-d'));
 
 
         $query = Orders::find()->where(['orders.carwash_id' => $cwId])->andWhere(['between', 'orders.date', $ordersFindFromDate, $ordersFindToDate]);
@@ -170,11 +161,13 @@ class AnalyticsController extends Controller
             }
         }
 
-        if ($filter = explode(',', \Yii::$app->request->get('filter'))) {
-            if (in_array('with-reviews', $filter)) {
+        $filterParam = \Yii::$app->request->get('filter', '');
+        if ($filterParam !== '') {
+            $filter = explode(',', $filterParam);
+            if (in_array('with-reviews', $filter, true)) {
                 $query->joinWith(['chats'])->andWhere('chat.id IS NOT NULL');
             }
-            if (in_array('removed', $filter)) {
+            if (in_array('removed', $filter, true)) {
                 $query->andWhere(['orders.status' => Orders::STATUS_REMOVED]);
             }
         }
@@ -199,26 +192,33 @@ class AnalyticsController extends Controller
     {
         $cwId = \Yii::$app->user->identity->getCWid() ?? 0;
 
-        $ordersFindFromDate = '2018-01-01';
-        $ordersFindToDate = date('Y-m-d');
+        [$ordersFindFromDate, $ordersFindToDate] = TimeHelper::resolveDateRange('2018-01-01', date('Y-m-d'));
+        $text = \Yii::$app->request->get('number');
+        $sort = \Yii::$app->request->get('sort');
 
-        $query = Orders::find()->where(['orders.carwash_id' => $cwId])->andWhere(['between', 'orders.date', $ordersFindFromDate, $ordersFindToDate]);
+        $query = Orders::find()
+            ->select([
+                'orders.car_number',
+                'orders.car_region',
+                'id' => 'MAX(orders.id)',
+            ])
+            ->where(['orders.carwash_id' => $cwId])
+            ->andWhere(['between', 'orders.date', $ordersFindFromDate, $ordersFindToDate])
+            ->groupBy(['orders.car_number', 'orders.car_region']);
 
-        if ($sort = \Yii::$app->request->get('sort')) {
-            if ($sort === 'total_price') {
-                $query->orderBy('SUM(orders.total_price) DESC');
-            } elseif ($sort === 'visits') {
-                $query->orderBy('COUNT(id) DESC');
-            } else {
-                $query->orderBy('id DESC');
-            }
+        if ($sort === 'total_price') {
+            $query->addSelect(['total_price_sum' => 'SUM(orders.total_price)']);
+            $query->orderBy(['total_price_sum' => SORT_DESC]);
+        } elseif ($sort === 'visits') {
+            $query->addSelect(['visits' => 'COUNT(orders.id)']);
+            $query->orderBy(['visits' => SORT_DESC]);
+        } else {
+            $query->orderBy(['id' => SORT_DESC]);
         }
 
-        if ($text = \Yii::$app->request->get('number')) {
-            $query->andWhere("CONCAT(orders.car_number,' ', orders.car_region) LIKE '%" . $text . "%'");
+        if (is_string($text) && $text !== '' && $text !== 'false') {
+            $query->andWhere(['like', new Expression("CONCAT(orders.car_number, ' ', orders.car_region)"), $text]);
         }
-
-        $query->groupBy(new Expression("CONCAT(orders.car_number, orders.car_region)"));
 
 //        if ($filter = explode(',', \Yii::$app->request->get('filter'))) {
 //            if (in_array('with-reviews', $filter)) {
@@ -232,7 +232,17 @@ class AnalyticsController extends Controller
             return \Yii::$app->response->sendFile($file);
         }
 
-        $pages = new Pagination(['totalCount' => $query->count()]);
+        $countQuery = Orders::find()
+            ->where(['orders.carwash_id' => $cwId])
+            ->andWhere(['between', 'orders.date', $ordersFindFromDate, $ordersFindToDate]);
+        if (is_string($text) && $text !== '' && $text !== 'false') {
+            $countQuery->andWhere(['like', new Expression("CONCAT(orders.car_number, ' ', orders.car_region)"), $text]);
+        }
+        $totalCount = (int) $countQuery
+            ->select(new Expression('COUNT(DISTINCT CONCAT(orders.car_number, orders.car_region))'))
+            ->scalar();
+
+        $pages = new Pagination(['totalCount' => $totalCount]);
         $pages->setPageSize(15);
         $orders = $query->offset($pages->offset)->limit($pages->limit)->all();
 

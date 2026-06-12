@@ -40,8 +40,33 @@ class TimeHelper
      */
     public static function isValidDate($date): bool
     {
+        if (!is_string($date) || $date === '') {
+            return false;
+        }
+
         $d = \DateTime::createFromFormat('Y-m-d', $date);
         return $d && $d->format('Y-m-d') === $date;
+    }
+
+    /**
+     * Диапазон дат из GET-параметров или значения по умолчанию.
+     *
+     * @return array{0: string, 1: string}
+     */
+    public static function resolveDateRange(string $defaultFrom, string $defaultTo, $dateFrom = null, $dateTo = null): array
+    {
+        if ($dateFrom === null) {
+            $dateFrom = \Yii::$app->request->get('dateFrom');
+        }
+        if ($dateTo === null) {
+            $dateTo = \Yii::$app->request->get('dateTo');
+        }
+
+        if (self::isValidDate($dateFrom) && self::isValidDate($dateTo)) {
+            return [$dateFrom, $dateTo];
+        }
+
+        return [$defaultFrom, $defaultTo];
     }
 
     /**
